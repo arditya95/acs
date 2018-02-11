@@ -2,6 +2,10 @@ import java.util.List;
 import java.math.BigInteger;
 import javax.smartcardio.*;
 import java.security.MessageDigest;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
  
 public class GetUID {
 	
@@ -48,8 +52,19 @@ public class GetUID {
     for (int i = 0; i < byteData.length; i++) {
      sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
     }
-
     System.out.println("Final Hashing : " + sb.toString());
+    
+    String hash_uid = sb.toString();
+    
+	Connection con = DBConnection.getConnection();
+	Statement stmt = con.createStatement();
+	try {
+		int rs = stmt.executeUpdate("INSERT INTO tb_mhs (nfc_mhs) value ('"+hash_uid+"')");
+	}
+	catch(SQLException e){ 
+	    // handle any errors
+	    System.out.println("SQLException: " + e.getMessage());
+		}
    
    // Disconnect the card
    card.disconnect(false);

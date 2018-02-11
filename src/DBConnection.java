@@ -1,39 +1,27 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
-class DBConnection{  
-	public static void main(String args[]){  
-		try{  
-			Class.forName("com.mysql.jdbc.Driver");  
-		}
-		catch (ClassNotFoundException e) {
-			System.out.println("MySQL JDBC Driver Not Found");
-			System.out.println("Error to find : " + e.getMessage());
-//			e.printStackTrace();
-			return;
-		}
-		try {
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost/db_nfc","root",""); //koneksi ke database value(jdbc:mysql://localhost/nama_database","username","password")
-			
-			//TEST//
-			Statement stmt = con.createStatement(); //deklarasi statement
-			ResultSet rs = stmt.executeQuery("select * from tb_mhs");  //contoh execute query
-			while(rs.next())  
-				System.out.println(rs.getInt(1)+"  "+rs.getString(2)+"  "+rs.getString(3));  //print Hasil
-			//TEST END//
-			
-			con.close();  //menutup koneksi
-		}	
-		catch(SQLException e){ 
-		    // handle any errors
-		    System.out.println("SQLException: " + e.getMessage());
-//		    System.out.println("SQLState: " + e.getSQLState());
-//		    System.out.println("VendorError: " + e.getErrorCode());
-//			e.printStackTrace();
-			return;
-			}  
-	}  
-}  
+public class DBConnection {
+	private static String url = "jdbc:mysql://localhost:3306/db_nfc";    
+    private static String driverName = "com.mysql.jdbc.Driver";   
+    private static String username = "root";   
+    private static String password = "";
+    private static Connection con;
+
+    public static Connection getConnection() {
+        try {
+            Class.forName(driverName);
+            try {
+                con = DriverManager.getConnection(url, username, password);
+            } catch (SQLException ex) {
+                // log an exception.
+                System.out.println("Failed to create the database connection."); 
+            }
+        } catch (ClassNotFoundException ex) {
+            // log an exception.
+            System.out.println("Driver not found."); 
+        }
+        return con;
+    }
+}
